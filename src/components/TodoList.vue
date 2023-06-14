@@ -1,28 +1,42 @@
 <template>
   <div class="todos">
-    <div class='header'>
-        <div class='tickAll' @click="changeAllItemState"></div>
-        <input type="text" ref="input" v-model="newItem" autoComplete="off" name="newTodo" class='newTodoInput'  placeholder=' What needs to be done?' />
-        <div className='submit' @click="saveItem">保存</div>
-    </div>    
+    <div class="header">
+      <div class="tickAll" @click="changeAllItemState"></div>
+      <input
+        type="text"
+        ref="input"
+        v-model="newItem"
+        autoComplete="off"
+        name="newTodo"
+        class="newTodoInput"
+        placeholder=" What needs to be done?"
+      />
+      <div className="submit" @click="saveItem">save</div>
+    </div>
     <div class="list">
-      <Item v-for="(item , index) in itemList" :key="index" :index="index" :item="item"></Item>
+      <Item
+        v-for="(item, index) in itemList"
+        :key="index"
+        :index="index"
+        :item="item"
+      ></Item>
     </div>
     <div class="footer">
-      <div class="itemNums">{{ leftItemNum }} {{ leftitemsTips }}</div>        
+      <div class="itemNums">{{ leftItemNum }} {{ leftitemsTips }}</div>
       <div class="controller">
         <div :class="allClassName" @click="changeMode('all')">All</div>
         <div :class="activeClassName" @click="changeMode('active')">Active</div>
-        <div :class="completedClassName" @click="changeMode('completed')">Completed</div>
+        <div :class="completedClassName" @click="changeMode('completed')">
+          Completed
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import Item from './Item.vue';
-import { useStore } from 'vuex';
-import { computed } from '@vue/reactivity';
+import { useStore } from "vuex";
+import { computed } from "@vue/reactivity";
 import { ref, watch } from "vue";
 const store = useStore();
 
@@ -38,7 +52,7 @@ let changeMode = (newmode) => {
   console.log(newmode);
   mode.value = newmode;
   localStorage.setItem("mode", mode.value);
-}
+};
 
 let allClassName = computed(() => {
   if (mode.value == "all") {
@@ -46,7 +60,7 @@ let allClassName = computed(() => {
   } else {
     return "all unselected";
   }
-})
+});
 
 let activeClassName = computed(() => {
   if (mode.value == "active") {
@@ -54,7 +68,7 @@ let activeClassName = computed(() => {
   } else {
     return "active unselected";
   }
-})
+});
 
 let completedClassName = computed(() => {
   if (mode.value == "completed") {
@@ -62,7 +76,7 @@ let completedClassName = computed(() => {
   } else {
     return "completed unselected";
   }
-})
+});
 
 let itemList = computed(() => {
   if (mode.value == "all") {
@@ -84,11 +98,10 @@ let itemList = computed(() => {
     });
     return list;
   }
-  
 });
 
-let addItem = (item) => store.commit('addItem', item);
-let changeAllItemState = () => store.commit('changeAllItemState');
+let addItem = (item) => store.commit("addItem", item);
+let changeAllItemState = () => store.commit("changeAllItemState");
 // let toPostAddLikes = () => store.dispatch('toPostAddLikes');
 console.log(itemList.value);
 
@@ -98,12 +111,12 @@ let saveItem = () => {
     let item = {
       id: Date.now(),
       text: newItem.value,
-      isFinished:false,
-    }
+      isFinished: false,
+    };
     addItem(item);
-    newItem.value = "";    
+    newItem.value = "";
   }
-}
+};
 
 let input = ref(null);
 window.addEventListener("keydown", (e) => {
@@ -113,10 +126,10 @@ window.addEventListener("keydown", (e) => {
     }, 100);
     watch(newItem, () => {
       clearTimeout(timer);
-    })
+    });
     // 当按完enter又有输入时不保存
   }
-})
+});
 // window.addEventListener("keydown", (e) => {
 //   if (e.code == "Enter" || e.code == "NumpadEnter") {
 //     saveItem();
@@ -151,23 +164,20 @@ let leftItemNum = computed(() => {
     if (item.isFinished == false) {
       num++;
     }
-  })
+  });
   return num;
-})
+});
 let leftitemsTips = computed(() => {
   return leftItemNum.value == 1 ? "item left" : "items left";
 });
 // 这样写会保持leftItemNum实时追踪，从而leftitemsTips响应
-
-
-
 </script>
 
 <style lang="scss" scoped>
-.todos{
-  width: 80%;
+.todos {
+  width: 90%;
   max-width: 750px;
-  min-width: 400px;
+  min-width: 300px;
   margin-bottom: 50px;
   border-radius: 4px;
   box-shadow: 0px 5px 25px 8px rgba(53, 73, 94, 0.241);
@@ -179,7 +189,7 @@ let leftitemsTips = computed(() => {
   width: 100%;
   background-color: white;
   height: 70px;
-  border-radius: 4px 4px 0px 0px ;
+  border-radius: 4px 4px 0px 0px;
   box-sizing: border-box;
   padding-right: 3px;
   .tickAll {
@@ -194,11 +204,11 @@ let leftitemsTips = computed(() => {
     flex: 1;
     box-sizing: border-box;
     height: 90%;
-    background:none;
-    outline:none;
-    border:none;
+    background: none;
+    outline: none;
+    border: none;
     font-size: 16px;
-  } 
+  }
   .submit {
     margin: 10px;
     cursor: pointer;
@@ -214,16 +224,28 @@ let leftitemsTips = computed(() => {
   background-color: white;
   border-radius: 0px 0px 4px 4px;
   border-top: solid 1px rgb(221, 221, 221);
-  .itemNums{
-    position: absolute;
-    left: 0;
-    margin-left: 20px;
+
+  @media screen and (max-width: 500px) {
+    .itemNums {
+      position: absolute;
+      left: 0;
+      margin-left: 20px;
+      display: none;
+    }
+  }
+
+  @media screen and (min-width: 500px) {
+    .itemNums {
+      position: absolute;
+      left: 0;
+      margin-left: 20px;
+    }
   }
 }
 
 .controller {
   flex-direction: row;
-  >div {
+  > div {
     border-radius: 6px;
     padding-left: 5px;
     padding-right: 5px;
@@ -232,7 +254,6 @@ let leftitemsTips = computed(() => {
     margin: 5px;
     border: 1px solid transparent;
     cursor: pointer;
-    
   }
   .selected {
     border: solid 1px rgb(66, 184, 131);
@@ -248,5 +269,4 @@ let leftitemsTips = computed(() => {
 .list {
   width: 100%;
 }
-
 </style>
